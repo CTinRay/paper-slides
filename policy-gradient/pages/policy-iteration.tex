@@ -1,0 +1,15 @@
+\begin{frame}
+    \frametitle{Policy Iteration with Funcation Approximation\footnote{Translated to: ``gradient ascend''.}}
+    \begin{itemize}
+    \item Given arbitrary initial parameter $\theta_0$ of policy $\pi_0$.
+    \item Find $w_0$ to approximate $Q^{\pi_0}(s, a)$ with $f_{w_0}(s, a)$.
+    \item By (\ref{eq:pgfa}), we have
+      \begin{equation*}
+        \frac{\partial \rho}{\partial \theta} = \sum_s d^\pi (s) \sum_a \frac{\partial \pi(s, a)}{\partial \theta} f_w(s, a)
+      \end{equation*}
+    \item Then we can update $\theta$ to get a better policy $\pi_1$ with parameter $\theta_1$.
+    \item To estimate $\left. \frac{\partial \rho}{\partial \theta} \right|_{\theta = \theta_1}$, we need to find $w_1$ to approximate $Q^{\pi_1}(s, a)$ with $f_{w_1}(s, a)$.
+    \item Repeat steps above.
+    \item See more in Theorem 3 of the paper.
+    \end{itemize}
+\end{frame}

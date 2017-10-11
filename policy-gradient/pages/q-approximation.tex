@@ -1,0 +1,29 @@
+\begin{frame}
+  \frametitle{Q Function Approximation - Motivation}
+  \begin{itemize}
+  \item Recall that we want to optimize $\rho$.
+  \item Recall that by Policy Gradient Theorem, we can get
+    \begin{equation*}
+      \frac{\partial \rho}{\partial \theta} = \sum_s d^\pi (s) \sum_a \frac{\partial \pi(s, a)}{\partial \theta} Q^\pi(s, a)
+    \end{equation*}
+  \item Then we can do gradient ascend!!
+  \item Wait!! We need $Q^\pi(s, a)$!! It is unkown!!
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Q Function Approximation}
+  \begin{itemize}
+  \item Let $f_w \in \mathcal{S} \times \mathcal{A} \to \mathcal{R}$ be the approximation of $Q$. $w$ is its parameters to learn.
+  \item Approximation means that we want to minimize square error:
+    \begin{equation}
+      (\hat{Q}^{\pi}(s_t, a_t) - \hat{f_w}(s_t, a_t))^2\label{eq:fw-square-err}
+    \end{equation}
+    where $\hat{Q}^{\pi}$ is some unbiased estimator of $Q^\pi(s_t, a_t)$.\footnote{We may say more about it when talking about critic/TD/Monte Carlo.}
+  \item If (\ref{eq:fw-square-err}) converges to local minimum, and $f_w$ satisfied some property\footnote{Check equation (4) in the paper.}, then
+    \begin{equation}
+      \frac{\partial \rho}{\partial \theta} = \sum_s d^\pi (s) \sum_a \frac{\partial \pi(s, a)}{\partial \theta} f_w(s, a) \label{eq:pgfa}
+    \end{equation}\footnote{Refer to theorem 2 in the paper.}
+  \end{itemize}
+\end{frame}

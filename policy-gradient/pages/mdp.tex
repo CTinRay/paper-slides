@@ -1,0 +1,21 @@
+\begin{frame}
+  \frametitle{Learning Framework}
+  \begin{itemize}
+  \item Environment: MDP
+    \begin{itemize}
+    \item States: $s_t \in \mathcal{S}$
+    \item Actions: $a_t \in \mathcal{A}$
+    \item Rewards: $r_t \in \mathcal{R}$
+    \item Transition Probility: $P_{ss'}^a = Pr\{s_{t+1} = s' | s_t = s, a_t = a\}$
+    \item Expect Rewards: $\mathcal{R}^a_s = E\{r_{t+1} | s_t = a, a_t = a\}$
+    \end{itemize}
+  \item Learning Agent
+    \begin{itemize}
+    \item Policy: $\pi(s, a, \theta) = Pr\{a_t = a | s_t = s, \theta\}$
+    \item where $\theta \in \mathcal{R}^l$ is a parameter vector.
+    \item For this paper, original policy gradient, assume that $\frac{\partial \pi(s, a)}{\partial \theta}$ exists.
+      \footnote{Thus $\pi$ cannot be deterministic. Namely, $\pi$ has to be stochastic}
+      \footnote{We will see why differentiability is assumed here.}
+    \end{itemize}
+  \end{itemize}
+\end{frame}

@@ -1,0 +1,35 @@
+
+\documentclass{beamer}
+
+\usefonttheme{professionalfonts}
+\usefonttheme{serif}
+\usepackage{fontspec}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\setmainfont{Noto Serif CJK TC}
+
+\usepackage[style=authortitle,backend=biber]{biblatex}
+\addbibresource{reference.bib}
+
+%Information to be included in the title page:
+\title{Policy gradient methods for reinforcement learning with function approximation}
+\subtitle{NIPS}
+\author{Richard S. Sutton, David McAllester, Satinder Singh, Yishay Mansour
+  AT\&T Labs}
+\date{TinRay}
+
+\setbeamertemplate{footline}[frame number]
+\begin{document}
+
+\frame{\titlepage}
+
+\input{pages/mdp.tex}
+\input{pages/objective.tex}
+\input{pages/policy-gradient.tex}
+\input{pages/q-approximation.tex}
+\input{pages/policy-iteration.tex}
+
+\end{document}
+

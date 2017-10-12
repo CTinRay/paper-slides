@@ -1,0 +1,103 @@
+\begin{frame}
+  \frametitle{Tasks Suitable for Reinforcement Learning}
+  \begin{itemize}
+  \item Many action, then get reward.
+  \item Such as game playing, go\footnote{Should go be capitalized?}, etc.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Markov Decision Process}
+  \begin{itemize}
+    \item Environment:
+      \begin{itemize}
+      \item Set of all states: $\mathcal{S}, \mathcal{S}^+$
+      \item Set of all actions possible in state $\mathcal{A}(s)$.
+      \item Set of all possible rewards: $\mathcal{R}$
+      \item Transition probability: $p(s'|s, a)$
+      \end{itemize}
+    \item Agent:
+      \begin{itemize}
+      \item Policy: $\pi(a, s) \in \mathbb{R}$, $\pi(s) \in \mathcal{A}$
+      \end{itemize}
+    \item Trajectory: $s_0, a_0, s_1, a_1, \cdots$
+    \item Episode: $s_0, a_0, r_0, s_1, a_1, r_1, \cdots$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{From supervised learning to RL}
+  \begin{itemize}
+  \item Supervised Learning
+    \begin{itemize}
+    \item Train Data: $x_1, x_2, \cdots$, $y_1, y_2, \cdots$.
+    \item To learn: $f$ that map $x$ to $y$.
+    \end{itemize}
+  \item Reinforcement Learning
+    \begin{itemize}
+    \item Environment
+    \item Find a way to maximize total reward.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Two perspectives toward RL}
+  \begin{itemize}
+  \item Actor: Learn what to do given a state $s$.
+    \begin{itemize}
+    \item But we don't know optimal action for each state $s$.
+    \item So policy gradient is there.
+    \end{itemize}
+  \item Critic: Learn how good an action $a$ is given a state $s$.
+    \begin{itemize}
+    \item But we don't have truth value of $(s, a)$.
+    \item So we have Monte Carlo, TD methods here.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Outline}
+  \begin{itemize}
+  \item Critic
+    \begin{itemize}
+    \item Monte Carlo
+      \begin{itemize}
+      \item Monte Carlo Estimation of Action Values
+      \item Monte Carlo Control
+      \item $\epsilon$-Greedy
+      \item Off-policy Prediction via Importance Sampling
+      \end{itemize}
+    \item Time Difference
+      \begin{itemize}
+      \item TD Prediction
+      \item SARSA
+      \item Q-Learning
+      \end{itemize}
+    \end{itemize}
+  \item Actor
+    \begin{itemize}
+    \item REINFORCE
+    \item Policy-Gradient (Actor-Critic?)
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Goal of learning critic}
+  \begin{itemize}
+  \item How good an action $a$ given $s$ is? \\
+    Ans: Expected total reward after action $a$ done on state $s$ with policy $\pi$.
+    \begin{equation*}
+      q_\pi(s, a) = E \left\{\sum_{k=1}^\infty \gamma^{k-1} r_{t+k} | s_t = s, a_t = a, \pi \right\}
+    \end{equation*}
+  \item So we want to learn $Q_\pi(s, a)$ to estimate $q_\pi(s, a)$, that is, minimize
+    \begin{equation*}
+      (Q_\pi(s, a) - \hat{q}_\pi(s, a))^2
+    \end{equation*}
+    where $\hat{q}_\pi$ is an (unbiased) estimator of $q_\pi$.
+  \item $\hat{q}_\pi$ is actually the difference between MC and TD.
+  \end{itemize}
+\end{frame}

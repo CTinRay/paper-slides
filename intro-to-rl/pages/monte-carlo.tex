@@ -1,0 +1,95 @@
+\begin{frame}
+  \frametitle{Monte Carlo Estimation of Action Values}
+  \begin{itemize}
+  \item Given a policy $\pi(s, a)$, how to estimate $q_\pi(s, a)$?
+  \item We can generate many episodes with $\pi$
+    \begin{align*}
+      s^0_0, a^0_0, r^0_0, s^0_1, a^0_1, r^0_1, \cdots \\
+      s^1_0, a^1_0, r^1_0, s^1_1, a^1_1, r^1_1, \cdots \\
+      \vdots
+    \end{align*}
+    Then for each $(s, a)$ pair $\hat{q}_\pi$ is average total reward get after action $a$ is taken on state $s$ in those episodes.
+    \begin{equation*}
+      \hat{q}_\pi(s, a) = \frac{1}{|\{(e, t) | s^{e}_{t} = s\}|} \sum_{\{(e, t) | s^{e}_{t} = s\}} \mathrm{Return}(s^e_t, a^e_t)
+    \end{equation*}
+    where $\mathrm{Return}(s^e_t, a^e_t)$ is defined as
+    \begin{equation*}
+      \mathrm{Return}(s^e_t, a^e_t) = \sum_{k=0} \gamma^{k} r^e_{t + k}
+    \end{equation*}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Monte Carlo Estimation of Action Values - Example}
+  
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Monte Carlo Control}
+  \begin{itemize}
+  \item How about random initialize a policy $\pi_0$;
+  \item then estimate $\hat{q}_{\pi_0}(s, a)$ with Monte Carlo method;
+  \item then make a new policy $\pi_1$ base on $\hat{q}_{\pi_0}$
+    \begin{equation*}
+      \pi_1(s) = \arg \max_a \hat{q}_{\pi_0}(s, a) 
+    \end{equation*}
+    which is better than $\pi_0$
+  \item then estimate $\hat{q}_{\pi_1}(s, a)$ with Monte Carlo method;
+  \item then make a new better policy...
+  \item And so on...
+  \item So we can get opitmal $\pi$!!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{$\epsilon$ Greedy Method}
+  \begin{itemize}
+  \item Wait! There is nearly no exploration!
+  \item So we can add probability $\epsilon$ to take action randomly.
+    \begin{equation*}
+      \begin{cases}
+        \pi_k(s, a) = \frac{\epsilon}{|\mathcal(A)|} + 1 - \epsilon & a = \arg \max_a \hat{q}_{\pi_{k-1}}(s, a) \\
+        \pi_k(s, a) = \frac{\epsilon}{|\mathcal(A)|} & \text{otherwise}\\
+      \end{cases}
+    \end{equation*}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Off-policy Prediction via Importance Sampling}
+  \begin{itemize}
+  \item How about using another policy $\mu$ to do exploration?
+  \item Original Mote Carlo use average return in many episodes to estimate
+    {
+      \tiny
+      \begin{align*}
+        q_\pi(s, a)
+        =& E_{\sim\pi} \left\{ \mathrm{Return}(s, a) \right\} \\
+        =& E \left\{\sum_{k=1} \gamma^{k-1} r_{t+k} | s_t = s, a_t = a, \pi \right\} \\
+        =& (\sum_{k=1} \gamma^{k-1} r_{t+k}) Pr(r_t, s_{t+1}, a_{t+2}, r_{t+2}, \cdots) \\
+        =& (\sum_{k=1} \gamma^{k-1} r_{t+k}) 
+           p(s_k, r_{k-1}| a_{k-1}) \prod_{k=1} \pi(s_k, a_k) p(s_{k+1}, r_{k}| a_{k}) \\
+        =& (\sum_{k=1} \gamma^{k-1} r_{t+k}) 
+           p(s_k, r_{k-1}| a_{k-1}) \prod_{k=1}\frac{\pi(s_k, a_k)}{\mu(s_k, a_k)} \prod_{k=1} \mu(s_k, a_k) p(s_{k+1}, r_{k}| a_{k})  \\
+        =& E_{\sim \mu} \left\{ \mathrm{Return}(s, a) \prod_{k=1} \mu(s_k, a_k) \right\} \\
+      \end{align*}      
+    }%
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Off-policy Prediction via Importance Sampling - Cont.}
+  \begin{itemize}
+  \item Then we can estimate $q_\pi$ with policy $\mu$ by
+    \begin{equation*}
+      \hat{q}_\pi(s, a) = \frac{1}{|\{(e, t) | s^{e}_{t} = s\}|} \sum_{\{(e, t) | s^{e}_{t} = s\}} \mathrm{Return}(s^e_t, a^e_t) \prod_{k=1} \mu(s_k, a_k)
+    \end{equation*}
+  \item Off-policy: Explore with policy different from that for evaluate.
+  \item Importance sampling: Estimating expectation from different distribution.
+  \end{itemize}
+\end{frame}
+

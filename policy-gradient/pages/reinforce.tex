@@ -1,0 +1,18 @@
+\begin{frame}
+  \frametitle{REINFORCE\footcite{Williams, Ronald J. "Simple statistical gradient-following algorithms for connectionist reinforcement learning." (1992)}}
+  \begin{itemize}
+  \item
+    \begin{equation*}
+      \rho = \mathop{\mathbb{E_{\sim \pi}}}\left[ \sum_t r_t \right]
+    \end{equation*}
+  \item
+    \begin{align*}
+      \frac{\partial}{\partial \theta} \rho
+      =& \sum_{(t_{1:T}, a_T) \in \mathbb{A}^{\dagger}} r_T  \cdot \nabla_{\theta} \pi(t_{1:T}, a_T; \theta) \\
+      =& \sum_{(t_{1:T}, a_T) \in \mathbb{A}^{\dagger}} r_T  \cdot \pi(t_{1:T}, a_T; \theta) \frac{\nabla_{\theta} \pi(t_{1:T}, a_T; \theta)}{\pi(t_{1:T}, a_T; \theta)} \\
+      =& \sum_{(t_{1:T}, a_T) \in \mathbb{A}^{\dagger}} r_T  \cdot \pi(t_{1:T}, a_T; \theta) \nabla_{\theta} \log{\pi(t_{1:T}, a_T; \theta)} \\
+      =& \mathbb{E}_{\pi( t_{1:T}, a_T; \theta)} \left[ r_T \nabla_{\theta} \log{\pi(t_{1:T}, a_T; \theta)} \right]
+    \end{align*}    
+  \end{itemize}
+  
+\end{frame}

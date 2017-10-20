@@ -1,0 +1,17 @@
+\begin{frame}
+  \frametitle{Estimate Gradient}
+  \begin{itemize}
+  \item Wait, how to estimate
+    \begin{equation*}
+      \frac{\partial \rho}{\partial \theta} = \sum_s d^\pi (s) \sum_a \frac{\partial \pi(s, a)}{\partial \theta} Q^\pi(s, a)
+    \end{equation*}
+  \item
+    \begin{align*}
+      \frac{\partial \rho}{\partial \theta}
+      =& \sum_s d^\pi (s) \sum_a \frac{\partial \pi(s, a)}{\partial \theta} Q^\pi(s, a) \\
+      =& \sum_s d^\pi (s) \sum_a \frac{\partial \pi(s, a)}{\partial \theta} \frac{1}{\pi(s, a)} \pi(s, a)  Q^\pi(s, a) \\
+      =& \sum_s d^\pi (s) \sum_a \pi(s, a) \frac{\partial \log \pi(s, a)}{\partial \theta} Q^\pi(s, a) \\
+      =& \mathop{\mathbb{E}_{\sim \pi}} \left[ \frac{\partial \log \pi(s, a)}{\partial \theta} Q^\pi(s, a) \right]
+    \end{align*}
+\end{itemize}
+\end{frame}

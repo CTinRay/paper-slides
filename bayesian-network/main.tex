@@ -1,0 +1,32 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+
+\usefonttheme{professionalfonts}
+\usefonttheme{serif}
+\usepackage{fontspec}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\setmainfont{Noto Serif CJK TC}
+\usepackage[style=authortitle,backend=biber]{biblatex}
+\addbibresource{reference.bib}
+
+%Information to be included in the title page:
+\title{Bayesian Recurrent Neural Networks}
+\date{TinRay}
+
+\setbeamertemplate{footline}[frame number]
+\begin{document}
+
+\frame{\titlepage}
+
+\input{pages/overview.tex}
+% \input{pages/map.tex}
+% \input{pages/bayesian.tex}
+% \input{pages/rnn.tex}
+% \input{pages/sharpen.tex}
+% \input{pages/experiences.tex}
+
+\end{document}
+

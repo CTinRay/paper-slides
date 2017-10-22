@@ -1,0 +1,73 @@
+\begin{frame}
+  \frametitle{Overview}
+  \begin{itemize}
+  \item RNN learnt by learning distribution of weights.
+  \item Better performance on language modeling and image caption generation than original LSTM.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Motivation}
+  \begin{itemize}
+  \item Regularization by posteriori
+  \item Expression of uncertainty
+  \item (An ensemble of many networks)
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Variational Approximation}
+  \begin{itemize}
+  \item Assume that $w$ follows a prior distribution $P(w)$.
+  \item From data $D$, we want to learn 
+    \begin{align*}
+      P(w | D) = \frac{P(D | w) P(w)}{\int_w P(D | w) P(w) \mathrm{d}w }
+    \end{align*}
+  \item But $\int_w P(D | w) P(w) \mathrm{d}w$ is intractable.
+  \item So what about learn $\theta$ to estimate $P(w | D)$ with $q(w | \theta)$.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Variational Free Energy}
+  \begin{itemize}
+  \item To approximate with $q(w | \theta)$, we want to minimize
+    \begin{align*}
+       & \mathrm{KL}[q(w | \theta) || P(w | D)] \\
+      =& \int_w q(w | \theta) \log \frac{q(w | \theta)}{P(w | D)} \mathrm{d} w \\
+      =& \int_w q(w | \theta) \log \frac{q(w | \theta) P(D)}{P(D, w)} \mathrm{d} w \\
+      =& \int_w q(w | \theta) \log \frac{q(w | \theta)}{P(D, w)} \mathrm{d} w +
+      \int_w P(w | \theta) \log P(D) \mathrm{d} w\\
+      =& \int_w q(w | \theta) \log \frac{q(w | \theta)}{P(w) P(D | w)} \mathrm{d} w + \log P(D) \\
+      =& \int_w q(w | \theta) \log \frac{q(w | \theta)}{P(w)} \mathrm{d} w
+         - \int_w q(w | \theta) \log P(D | w) \mathrm{d} w + \log P(D) \\
+      =& \underbrace{
+             \overbrace{\mathrm{KL}[q(w | \theta) || P(w)]}^{\text{complexity cost}}
+             \overbrace{-\mathop{\mathbb{E}_{q(w | \theta)}}[\log P(D | w)]}^{\text{likelihood cost}}
+         }_{\text{Variational Free Energy, to minimize}}
+         + \underbrace{\log P(D)}_{\text{constant}}
+    \end{align*}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Gradient of Variational Free Energy}
+  Assume that $\theta = (\mu, \sigma)$, $q(w | \theta) = \phi(w | \mu, \sigma^2)$, $q(\epsilon) = \phi(\epsilon)$, $w = \mu + \epsilon \circ \sigma$
+  \begin{align*}
+     & \mathrm{KL}[q(w | \theta) || P(w)] - \mathop{\mathbb{E}_{q(w | \theta)}}[\log P(D | w)] \\
+    =& \int_w q(w | \theta) [\log q(w | \theta) - \log P(w) - \log P(D | w)] \mathrm{d} w \\
+    =& \int_w q(\epsilon) [\log q(w | \theta) - \log P(w) - \log P(D | w)] \mathrm{d} \epsilon \\
+     & \because q(w | \theta) \mathrm{d}w = q(\epsilon) \mathrm{d}\epsilon \\
+    =& \mathop{\mathbb{E}_\epsilon }[\log q(w | \theta) - \log P(w) - \log P(D | w)]
+  \end{align*}
+  That is,
+  \begin{align*}
+     & \frac{\partial}{\partial \theta} \mathrm{KL}[q(w | \theta) || P(w)] - \mathop{\mathbb{E}_{q(w | \theta)}}[\log P(D | w)] \\
+    =& \mathop{\mathbb{E}_\epsilon }[\frac{\partial}{\partial \theta} \log q(w | \theta) - \log P(w) - \log P(D | w)]
+  \end{align*}
+  
+\end{frame}

@@ -20,13 +20,13 @@
 \begin{frame}
   \frametitle{Variational Approximation}
   \begin{itemize}
-  \item Assume that $w$ follows a prior distribution $P(w)$.
+  \item Assume that network weights $\theta$ follows a prior distribution $P(\theta)$.
   \item From data $D$, we want to learn 
     \begin{align*}
-      P(w | D) = \frac{P(D | w) P(w)}{\int_w P(D | w) P(w) \mathrm{d}w }
+      P(\theta | D) = \frac{P(D | \theta) P(\theta)}{\int_\theta P(D | \theta) P(\theta) \mathrm{d}\theta }
     \end{align*}
-  \item But $\int_w P(D | w) P(w) \mathrm{d}w$ is intractable.
-  \item So what about learn $\theta$ to estimate $P(w | D)$ with $q(w | \theta)$.
+  \item But $\int_\theta P(D | \theta) P(\theta) \mathrm{d}\theta$ is intractable.
+  \item Assume that $\theta \sim \mathcal{N}(\mu, \sigma^2)$, what about learn $\mu, \sigma$ to estimate $P(\theta | D)$ with $q(\theta | \mu, \sigma^2)$ (Abbreviated to $q(\theta)$.
   \end{itemize}
 \end{frame}
 
@@ -36,17 +36,17 @@
   \begin{itemize}
   \item To approximate with $q(w | \theta)$, we want to minimize
     \begin{align*}
-       & \mathrm{KL}[q(w | \theta) || P(w | D)] \\
-      =& \int_w q(w | \theta) \log \frac{q(w | \theta)}{P(w | D)} \mathrm{d} w \\
-      =& \int_w q(w | \theta) \log \frac{q(w | \theta) P(D)}{P(D, w)} \mathrm{d} w \\
-      =& \int_w q(w | \theta) \log \frac{q(w | \theta)}{P(D, w)} \mathrm{d} w +
-      \int_w P(w | \theta) \log P(D) \mathrm{d} w\\
-      =& \int_w q(w | \theta) \log \frac{q(w | \theta)}{P(w) P(D | w)} \mathrm{d} w + \log P(D) \\
-      =& \int_w q(w | \theta) \log \frac{q(w | \theta)}{P(w)} \mathrm{d} w
-         - \int_w q(w | \theta) \log P(D | w) \mathrm{d} w + \log P(D) \\
+       & \mathrm{KL}[q(\theta) || P(\theta | D)] \\
+      =& \int_\theta q(\theta) \log \frac{q(\theta)}{P(\theta | D)} \mathrm{d} \theta \\
+      =& \int_\theta q(\theta) \log \frac{q(\theta) P(D)}{P(D, \theta)} \mathrm{d} \theta \\
+      =& \int_\theta q(\theta) \log \frac{q(\theta)}{P(D, \theta)} \mathrm{d} \theta +
+      \int_w q(\theta) \log P(D) \mathrm{d} \theta\\
+      =& \int_\theta q(\theta) \log \frac{q(\theta)}{P(\theta) P(D | \theta)} \mathrm{d} w + \log P(D) \\
+      =& \int_\theta q(\theta) \log \frac{q(\theta)}{P(\theta)} \mathrm{d} \theta
+         - \int_\theta q(\theta) \log P(D | \theta) \mathrm{d} \theta + \log P(D) \\
       =& \underbrace{
-             \overbrace{\mathrm{KL}[q(w | \theta) || P(w)]}^{\text{complexity cost}}
-             \overbrace{-\mathop{\mathbb{E}_{q(w | \theta)}}[\log P(D | w)]}^{\text{likelihood cost}}
+             \overbrace{\mathrm{KL}[q(\theta) || P(\theta)]}^{\text{complexity cost}}
+             \overbrace{-\mathop{\mathbb{E}_{q(\theta)}}[\log P(D | \theta)]}^{\text{likelihood cost}}
          }_{\text{Variational Free Energy, to minimize}}
          + \underbrace{\log P(D)}_{\text{constant}}
     \end{align*}
@@ -55,19 +55,20 @@
 
 
 \begin{frame}
-  \frametitle{Gradient of Variational Free Energy}
-  Assume that $\theta = (\mu, \sigma)$, $q(w | \theta) = \phi(w | \mu, \sigma^2)$, $q(\epsilon) = \phi(\epsilon)$, $w = \mu + \epsilon \circ \sigma$
+  \frametitle{Gradient of Variational Free Energy - $\theta$}
+  % Assume that $\theta = (\mu, \sigma)$, $q(w | \theta) = \phi(w | \mu, \sigma^2)$, $q(\epsilon) = \phi(\epsilon)$, $w = \mu + \epsilon \circ \sigma$
   \begin{align*}
-     & \mathrm{KL}[q(w | \theta) || P(w)] - \mathop{\mathbb{E}_{q(w | \theta)}}[\log P(D | w)] \\
-    =& \int_w q(w | \theta) [\log q(w | \theta) - \log P(w) - \log P(D | w)] \mathrm{d} w \\
-    =& \int_w q(\epsilon) [\log q(w | \theta) - \log P(w) - \log P(D | w)] \mathrm{d} \epsilon \\
-     & \because q(w | \theta) \mathrm{d}w = q(\epsilon) \mathrm{d}\epsilon \\
-    =& \mathop{\mathbb{E}_\epsilon }[\log q(w | \theta) - \log P(w) - \log P(D | w)]
+     & \mathrm{KL}[q(\theta) || P(\theta)] - \mathop{\mathbb{E}_{q(\theta)}}[\log P(D | \theta)] \\
+    =& \int_w q(\theta) [\log q(\theta) - \log P(\theta) - \log P(D | \theta)] \mathrm{d} \theta \\
+    =& \mathop{\mathbb{E}_\theta }[\log q(\theta) - \log P(\theta) - \log P(D | \theta)]
   \end{align*}
   That is,
   \begin{align*}
-     & \frac{\partial}{\partial \theta} \mathrm{KL}[q(w | \theta) || P(w)] - \mathop{\mathbb{E}_{q(w | \theta)}}[\log P(D | w)] \\
-    =& \mathop{\mathbb{E}_\epsilon }[\frac{\partial}{\partial \theta} \log q(w | \theta) - \log P(w) - \log P(D | w)]
+     & \frac{\partial}{\partial \theta} \mathrm{KL}[q(\theta) || P(\theta)] - \mathop{\mathbb{E}_{q(\theta)}}[\log P(D | \theta)] \\
+    =& \mathop{\mathbb{E}_\epsilon }
+       [\underbrace{\frac{\partial}{\partial \theta} \log q(\theta)
+       - \frac{\partial}{\partial \theta} \log P(\theta)}_{g^{KL}_\theta}
+       \underbrace{- \frac{\partial}{\partial \theta} \log P(D | \theta)}_{\text{original gradient $g$}}]
   \end{align*}
   
 \end{frame}

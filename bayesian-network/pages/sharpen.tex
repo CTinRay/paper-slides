@@ -1,0 +1,53 @@
+\begin{frame}
+  \frametitle{Posterior Sharpening}  
+  \begin{itemize}
+  \item To add side information to the distribution.
+  \item To make training more stable.
+  \item
+    \begin{equation*}
+      q(\theta | \varphi, (x,y)) = \mathcal{N}(\theta|\varphi - \eta * g_{\varphi} , \sigma_0^2I),
+    \end{equation*}
+    where
+    \begin{align*}
+      \phi &\sim \mathcal{N}(\mu, \sigma) \\
+      g_\phi &= -\nabla_\phi \log p(y|\theta,x) \\    
+    \end{align*}
+    and $\eta$ is to learn.
+  \item As line search along gradient.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Loss of the Sharpened Distribution}
+  \begin{equation}
+    L(\mu,\sigma,\eta)=E_{(x,y)}[E_{q(\varphi)q(\theta | \varphi, (x,y))}  [L(x,y, \theta,\varphi|\mu,\sigma,\eta)]]     \label{eq:sharpen-loss}
+  \end{equation}
+  where
+  \begin{align*}
+    L(x,y, \theta,\varphi|\mu,\sigma,\eta)
+    =& -\log p(y|\theta,x) \\
+     & + \mathrm{KL}[q(\theta|\varphi, (x,y)) || p(\theta|\varphi)] \\
+     & + \frac{1}{C} \mathrm{KL}[q(\varphi) || p(\varphi)]
+  \end{align*}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Algorithm for the Sharpen Distribution}
+  \begin{algorithm}[H]
+    \caption{BBB with Posterior Sharpening}
+    \label{alg:l2l}
+    \begin{algorithmic}
+      \STATE{Sample a minibatch $(x,y)$ of truncated sequences.}
+      \STATE{Sample $\varphi \sim q(\varphi) = \mathcal{N}(\varphi|\mu, \sigma)$.}
+      % \\STATE Set network parameters to $\varphi$ and $p(\theta|\varphi) = \mathcal{N}(\varphi, \sigma_\theta) $
+      \STATE{Let $g_{\varphi} = -\nabla_\varphi \log p(y|\varphi,x)$.}
+      \STATE{Sample  $\theta \sim q(\theta|\varphi, (x,y)) =\mathcal{N}(\theta|\varphi - \eta * g_{\varphi} , \sigma_0^2I)$.}
+      % \State Set network parameters to $\theta$
+      \STATE{Compute the gradients of eq.~\eqref{eq:sharpen-loss} w.r.t. $(\mu, \sigma, \eta)$.}
+      \STATE{Update $(\mu, \sigma, \eta)$.}
+	\end{algorithmic}
+  \end{algorithm}
+\end{frame}
+

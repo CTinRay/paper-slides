@@ -1,0 +1,84 @@
+\begin{frame}
+  \frametitle{Language Model}
+  \begin{table}
+    \caption{Word-level perplexity on the Penn Treebank language modelling task (lower is better).}
+    \label{tab:ptb}
+    \small
+    \begin{tabular}{r|c|c}
+      \textbf{Model (medium)}             & \textbf{Validation} & \textbf{Test} \\ 
+      \hline
+      LSTM & 120.7 & 114.5\\
+      LSTM dropout                        & 	86.2	        &	82.1 \\
+      SGLD    	                        &	N/A				&	109.1		\\
+      SGLD dropout	                    &	N/A				&	99.6		\\
+      Variational LSTM (tied weights)     &	81.8        	&	79.7 \\
+      Variational LSTM (tied weights, MS)	&	N/A		        &	79.0		\\
+      Bayes by Backprop (BBB)       	        & 	78.8	        &	 75.5		\\
+      % \belowspace
+      BBB with Posterior Sharpening            &    {$\bf \leq 77.8$}           &   {$\bf \leq 74.8$}		\\
+      
+      \hline 
+                                          % & &  \\
+      \shortstack{\textbf{Model (medium)} \\ \textbf{with Dynamic Evaluation}}
+                                          & \textbf{Validation} & \textbf{Test} \\
+      \hline
+      % \abovespace
+      LSTM dropout                      & 	79.7	        &	77.1 \\
+      Bayes by Backprop (BBB)   	        & 	73.4	        &	70.7		\\
+      BBB with Posterior Sharpening	      &    {$\bf \leq 72.6$}          &   {$\bf \leq 69.8$}		\\
+      \hline
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Entropy Gap}
+  \begin{figure}[t]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/entropy}
+    \caption{Entropy gap $\Delta H_p$ (eq. \eqref{eq:entropy_gap}) between reversed and regular Penn Treebank test sets $\times$ number of samples.}
+    \label{fig:uncertainty}
+    \vskip -0.2in
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Image Captioning}
+  \begin{table}[H]
+    \caption{Image captioning results on MSCOCO development set.}
+    \label{tab:captioning}
+    \vskip 0.15in
+    \centering
+    \small
+    \begin{tabular}{r|c|c|c}
+      \textbf{Model}             & \textbf{Perplexity} & \textbf{BLUE-4} & \textbf{CIDER}\\ 
+      \hline
+      % \abovespace
+      Show and Tell                &      8.3          &  28.8    & 89.8  \\
+      Bayes by Backprop  (BBB)	 & 	    {\bf 8.1 }       & {\bf 30.2}	& {\bf 96.0}	\\
+      \hline
+    \end{tabular}
+    \vskip -0.1in
+  \end{table}
+\end{frame}
+
+
+\begin{frame}
+  \begin{figure}[H]    
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/fig2_captioning1}
+    \caption{Image captioning results on MSCOCO development set.}
+    \label{fig:caption}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/fig3_captioning2}
+    \label{fig:caption}
+  \end{figure}
+\end{frame}

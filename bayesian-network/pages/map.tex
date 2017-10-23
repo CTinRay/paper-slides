@@ -1,0 +1,31 @@
+\begin{frame}
+  \frametitle{Maximize a Posteriori}
+  To learn network with weights $w$ from data $D$
+  \begin{itemize}
+  \item Maximum Likelihood
+    \begin{equation*}
+      w = \arg \max_w \log P(D | w)
+    \end{equation*}
+  \item Maximize a Posteriori
+    \begin{align*}
+      w
+      =& \arg \max_w \log P(w | D) \\
+      =& \arg \max_w \log \frac{P(D | w) P(w)}{P(D)} \\
+      =& \arg \max_w \log P(D | w) + \log P(w)
+    \end{align*}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Motivation}
+  \begin{itemize}
+  \item Regularization 
+  \item Expression of Uncertainty
+  \item (An ensemble of many networks)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{}
+\end{frame}

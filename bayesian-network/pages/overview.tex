@@ -55,20 +55,84 @@
 
 
 \begin{frame}
-  \frametitle{Gradient of Variational Free Energy - $\theta$}
+  \frametitle{Rewrite Loss}
   % Assume that $\theta = (\mu, \sigma)$, $q(w | \theta) = \phi(w | \mu, \sigma^2)$, $q(\epsilon) = \phi(\epsilon)$, $w = \mu + \epsilon \circ \sigma$
   \begin{align*}
-     & \mathrm{KL}[q(\theta) || P(\theta)] - \mathop{\mathbb{E}_{q(\theta)}}[\log P(D | \theta)] \\
-    =& \int_w q(\theta) [\log q(\theta) - \log P(\theta) - \log P(D | \theta)] \mathrm{d} \theta \\
-    =& \mathop{\mathbb{E}_\theta }[\log q(\theta) - \log P(\theta) - \log P(D | \theta)]
-  \end{align*}
-  That is,
-  \begin{align*}
-     & \frac{\partial}{\partial \theta} \mathrm{KL}[q(\theta) || P(\theta)] - \mathop{\mathbb{E}_{q(\theta)}}[\log P(D | \theta)] \\
-    =& \mathop{\mathbb{E}_\epsilon }
-       [\underbrace{\frac{\partial}{\partial \theta} \log q(\theta)
-       - \frac{\partial}{\partial \theta} \log P(\theta)}_{g^{KL}_\theta}
-       \underbrace{- \frac{\partial}{\partial \theta} \log P(D | \theta)}_{\text{original gradient $g$}}]
+    \mathcal{L}(\theta) 
+    =& \mathrm{KL}[q(\theta) || P(\theta)] - \mathop{\mathbb{E}_{q(\theta)}}[\log P(D | \theta)] \\
+    =& \int_\theta q(\theta) [\log q(\theta) - \log P(\theta) - \log P(D | \theta)] \mathrm{d} \theta \\
+    =& \mathop{\mathbb{E}_{q(\theta)} }[\log q(\theta) - \log P(\theta) - \log P(D | \theta)]
   \end{align*}
   
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Gradient of Variational Free Energy - $\mu, \sigma$}
+  Let $\theta = \mu + \epsilon \circ \sigma$,
+  \begin{align*}
+    \Delta_\mu &= g + g^{KL}_\theta + g^{KL}_\mu \\
+    \Delta_\sigma &= (g + g^{KL}_\theta) \epsilon + g^{KL}_\sigma
+  \end{align*}
+  where
+  \begin{align*}
+    g =& \mathop{\mathbb{E}_{q(\theta)}}[\frac{\partial}{\partial \theta} - \log P(D | \theta)] \\
+    g^{KL}_\theta =& \mathop{\mathbb{E}_{q(\theta)}}[\frac{\partial}{\partial \theta} \log q(\theta) - \frac{\partial}{\partial \theta} \log P(\theta)] \\
+    g^{KL}_\mu =& \mathop{\mathbb{E}_{q(\theta)}}[\frac{\partial}{\partial \mu} \log q(\theta) - \frac{\partial}{\partial \mu} \log P(\theta)] \\
+    g^{KL}_\sigma =& \mathop{\mathbb{E}_{q(\theta)}}[\frac{\partial}{\partial \sigma} \log q(\theta) - \frac{\partial}{\partial \sigma} \log P(\theta)] \\
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Bayes by Backprop}
+  % Copy paste from original paper
+  \begin{algorithm}[H]
+    \caption{Bayes by Backprop}
+    \label{alg:bbb}
+	\begin{algorithmic}
+      \STATE{Sample $\epsilon \sim \mathcal{N}(0, I)$, $\epsilon \in \mathbb{R}^d$.}
+      \STATE{Set network parameters to $\theta = \mu + \sigma\epsilon$.}
+      \STATE{Do forward propagation and backpropagation as normal.}
+      \STATE{Let $g$ be the gradient with respect to $\theta$ from backpropagation.} 
+      \STATE{Let $g^{KL}_\theta, g^{KL}_\mu, g^{KL}_\sigma$ be the gradients of $\log \mathcal{N}(\theta|\mu, \sigma) - \log p(\theta)$ with respect to $\theta$, $\mu$ and 
+        $\sigma$ respectively.} 
+      \STATE{Update $\mu$ according to the gradient $g + g^{KL}_\theta + g^{KL}_\mu$.} 
+      \STATE{Update $\sigma$ according to the gradient $(g + g^{KL}_\theta) \epsilon + g^{KL}_\sigma$.}
+	\end{algorithmic}
+  \end{algorithm}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Loss for RNN}
+  \begin{align}
+    \mathcal{L}(\theta) &=
+                          - \mathbb{E}_{q(\theta)}\left[\log \prod_{b=1}^B \prod_{c=1}^{C} p(y^{(b,c)}|\theta, x^{(b,c)}) \right]
+                          \nonumber \\
+                        &
+                          + KL[q(\theta) || p(\theta)]
+  \end{align}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Bayes by Backprop for RNNs}
+  \begin{algorithm}[H]
+    \caption{Bayes by Backprop for RNNs}
+        \label{alg:rnnbbb}
+    \begin{algorithmic}
+        \STATE{Sample $\epsilon \sim \mathcal{N}(0,I)$, $\epsilon \in \mathbb{R}^d$.}
+        \STATE{Set network parameters to $\theta = \mu + \sigma\epsilon$.}
+        \STATE{Sample a minibatch of truncated sequences $(x,y)$.}
+        \STATE{Do forward propagation and backpropagation as normal on minibatch.}
+        \STATE{Let $g$ be the gradient with respect to $\theta$ from backpropagation.}
+        \STATE{Let $g^{KL}_\theta, g^{KL}_\mu, g^{KL}_\sigma$ be the gradients of $\log \mathcal{N}(\theta|\mu, \sigma) - \log p(\theta)$ w.r.t. $\theta$, $\mu$ and $\sigma$ respectively.}
+        \STATE{Update $\mu$ according to the gradient $\frac{g + \frac{1}{C}g^{KL}_\theta}{B} + \frac{g^{KL}_\mu}{B C}$.}
+        \STATE{Update $\sigma$ according to the gradient $\left(\frac{g + \frac{1}{C} g^{KL}_\theta}{B}\right) \epsilon + \frac{g^{KL}_\sigma}{B C}$.}
+    \end{algorithmic}
+\end{algorithm}
+
 \end{frame}

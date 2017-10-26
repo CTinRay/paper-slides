@@ -1,0 +1,75 @@
+\section{Bayes by Backprop}
+
+
+\begin{frame}
+  \frametitle{Variational Free Energy}
+  So we want find $\theta$ to minimize
+  \begin{align*}
+    \mathcal{L}(\theta)
+    =& \mathrm{KL}[q(\theta) || P(\theta | D)] \\
+    =& \int_\theta q(\theta) \log \frac{q(\theta)}{P(\theta | D)} \mathrm{d} \theta \\
+    =& \int_\theta q(\theta) \log \frac{q(\theta) P(D)}{P(D, \theta)} \mathrm{d} \theta \\
+    =& \int_\theta q(\theta) \log \frac{q(\theta)}{P(D, \theta)} \mathrm{d} \theta +
+       \int_w q(\theta) \log P(D) \mathrm{d} \theta\\
+    =& \int_\theta q(\theta) \log \frac{q(\theta)}{P(\theta) P(D | \theta)} \mathrm{d} w + \log P(D) \\
+    =& \int_\theta q(\theta) \log \frac{q(\theta)}{P(\theta)} \mathrm{d} \theta
+       - \int_\theta q(\theta) \log P(D | \theta) \mathrm{d} \theta + \log P(D) \\
+    =& \underbrace{
+       \overbrace{\mathrm{KL}[q(\theta) || P(\theta)]}^{\text{complexity cost}}
+       \overbrace{-\mathop{\mathbb{E}_{q(\theta)}}[\log P(D | \theta)]}^{\text{likelihood cost}}
+       }_{\text{Variational Free Energy, to minimize}}
+       + \underbrace{\log P(D)}_{\text{constant}}
+  \end{align*}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Rewrite Loss as expectation}
+  % Assume that $\theta = (\mu, \sigma)$, $q(w | \theta) = \phi(w | \mu, \sigma^2)$, $q(\epsilon) = \phi(\epsilon)$, $w = \mu + \epsilon \circ \sigma$
+  \begin{align*}
+    \mathcal{L}(\theta) 
+    =& \mathrm{KL}[q(\theta) || P(\theta)] - \mathop{\mathbb{E}_{q(\theta)}}[\log P(D | \theta)] \\
+    =& \int_\theta q(\theta) [\log q(\theta) - \log P(\theta) - \log P(D | \theta)] \mathrm{d} \theta \\
+    =& \mathop{\mathbb{E}_{q(\theta)} }[\log q(\theta) - \log P(\theta) - \log P(D | \theta)]
+  \end{align*}
+  
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Gradient of Variational Free Energy - $\mu, \sigma$}
+  Let $\theta = \mu + \epsilon \circ \sigma$,
+  \begin{align*}
+    \Delta_\mu &= g + g^{KL}_\theta + g^{KL}_\mu \\
+    \Delta_\sigma &= (g + g^{KL}_\theta) \epsilon + g^{KL}_\sigma
+  \end{align*}
+  where
+  \begin{align*}
+    g =& \mathop{\mathbb{E}_{q(\theta)}}[\frac{\partial}{\partial \theta} - \log P(D | \theta)] \\
+    g^{KL}_\theta =& \mathop{\mathbb{E}_{q(\theta)}}[\frac{\partial}{\partial \theta} \log q(\theta) - \frac{\partial}{\partial \theta} \log P(\theta)] \\
+    g^{KL}_\mu =& \mathop{\mathbb{E}_{q(\theta)}}[\frac{\partial}{\partial \mu} \log q(\theta) - \frac{\partial}{\partial \mu} \log P(\theta)] \\
+    g^{KL}_\sigma =& \mathop{\mathbb{E}_{q(\theta)}}[\frac{\partial}{\partial \sigma} \log q(\theta) - \frac{\partial}{\partial \sigma} \log P(\theta)] \\
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Bayes by Backprop}
+  % Copy paste from original paper
+  \begin{algorithm}[H]
+    \caption{Bayes by Backprop}
+    \label{alg:bbb}
+	\begin{algorithmic}
+      \STATE{Sample $\epsilon \sim \mathcal{N}(0, I)$, $\epsilon \in \mathbb{R}^d$.}
+      \STATE{Set network parameters to $\theta = \mu + \sigma\epsilon$.}
+      \STATE{Do forward propagation and backpropagation as normal.}
+      \STATE{Let $g$ be the gradient with respect to $\theta$ from backpropagation.} 
+      \STATE{Let $g^{KL}_\theta, g^{KL}_\mu, g^{KL}_\sigma$ be the gradients of $\log \mathcal{N}(\theta|\mu, \sigma) - \log p(\theta)$ with respect to $\theta$, $\mu$ and 
+        $\sigma$ respectively.} 
+      \STATE{Update $\mu$ according to the gradient $g + g^{KL}_\theta + g^{KL}_\mu$.} 
+      \STATE{Update $\sigma$ according to the gradient $(g + g^{KL}_\theta) \epsilon + g^{KL}_\sigma$.}
+	\end{algorithmic}
+  \end{algorithm}
+\end{frame}
+

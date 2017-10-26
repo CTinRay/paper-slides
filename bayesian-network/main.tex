@@ -10,25 +10,35 @@
 \usepackage{booktabs}
 \usepackage{algorithm}
 \usepackage{algorithmic}
-\setmainfont{Noto Serif CJK TC}
 \usepackage[style=authortitle,backend=biber]{biblatex}
 \addbibresource{reference.bib}
 
-%Information to be included in the title page:
+% Make font fot Traditional Chinese
+\newfontfamily\zhfont[Scale=1.0]{Noto Serif CJK TC}
+
+% Information to be included in the title page:
 \title{Bayesian Recurrent Neural Networks}
-\date{TinRay}
+\author{Meire Fortunato, Charles Blundell, Oriol Vinyals}
+\date{Presentator: TinRay}
 
 \setbeamertemplate{footline}[frame number]
 \begin{document}
 
-\frame{\titlepage}
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
 
+\frame{\titlepage}
 \input{pages/overview.tex}
+\input{pages/bbb.tex}
+\input{pages/rnn.tex}
 \input{pages/sharpen.tex}
 \input{pages/experiments.tex}
-% \input{pages/rnn.tex}
-% \input{pages/sharpen.tex}
-% \input{pages/experiences.tex}
+\input{pages/references.tex}
 
 \end{document}
 

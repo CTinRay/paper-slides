@@ -1,3 +1,5 @@
+\section{Posterior Sharpening}
+
 \begin{frame}
   \frametitle{Posterior Sharpening}  
   \begin{itemize}
@@ -12,7 +14,7 @@
       \phi &\sim \mathcal{N}(\mu, \sigma) \\
       g_\phi &= -\nabla_\phi \log p(y|\theta,x) \\    
     \end{align*}
-    and $\eta$ is to learn.
+    and $\mu, \sigma, \eta$ is to learn.
   \item As line search along gradient.
 \end{itemize}
 \end{frame}
@@ -21,11 +23,11 @@
 \begin{frame}
   \frametitle{Loss of the Sharpened Distribution}
   \begin{equation}
-    L(\mu,\sigma,\eta)=E_{(x,y)}[E_{q(\varphi)q(\theta | \varphi, (x,y))}  [L(x,y, \theta,\varphi|\mu,\sigma,\eta)]]     \label{eq:sharpen-loss}
+    \mathcal{L}(\mu,\sigma,\eta)=E_{(x,y)}[E_{q(\varphi)q(\theta | \varphi, (x,y))}  [L(x,y, \theta,\varphi|\mu,\sigma,\eta)]]     \label{eq:sharpen-loss}
   \end{equation}
   where
   \begin{align*}
-    L(x,y, \theta,\varphi|\mu,\sigma,\eta)
+    \mathcal{L}(x,y, \theta,\varphi|\mu,\sigma,\eta)
     =& -\log p(y|\theta,x) \\
      & + \mathrm{KL}[q(\theta|\varphi, (x,y)) || p(\theta|\varphi)] \\
      & + \frac{1}{C} \mathrm{KL}[q(\varphi) || p(\varphi)]

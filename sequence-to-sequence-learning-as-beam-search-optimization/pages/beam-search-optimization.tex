@@ -1,0 +1,89 @@
+\section{Beam Search Optimization}
+
+
+\begin{frame}
+  \frametitle{Concepts of Beam Search Optimization}
+  \begin{itemize}
+  \item Scoring whole sentence instead of maximizing likelihood word by word.
+    \begin{itemize}
+    \item So we take sentence level evaluation metrics into account.
+    \item So we can expose the model to its own error when training.
+    \end{itemize}
+  \item The goal is to optimize the score function $f$ to keep gold sequence $y_{1:t}$ in beam.
+  \item Penalize “gold sequence’s failing off the beam”.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Search-Based Loss
+  \footnote{Notations are a little bit different from paper's for simplicity.}}
+  Let
+  \begin{itemize}
+  \item $K_{tr}$ be the beam size when training.
+  \item $\hat{y}^{(K_{tr})}_{1:t}$ be the last ranked sequence in the beam.
+  \end{itemize}
+
+  Then
+  \begin{itemize}
+  \item When $t \ne T$, keep gold sequence in beam, namely keep $f(y_{1:t}) > f(\hat{y}^{(K_{tr})}_{1:t}) + 1$. 
+    So the loss is
+    $$\mathcal{L}_t(f) = \Delta(\hat{y}_{1:t}^{(K)})\max[f(\hat{y}_t^{(K_{tr})}) + 1 - f(y_t), 0]$$
+  \item When $t = T$, we want gold sequence to have highest score in the beam
+    $$\mathcal{L}_t(f) = \Delta(\hat{y}_{1:t}^{(K)})\max[f(\hat{y}_t^{(K_{top})}) + 1 - f(y_t), 0]$$
+    where $K_{top} = \arg \max_{K: \hat{y}^{(K)}_{1:t} \ne y_{1:t}} f(\hat{y}_t^{(K)})$.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{$\Delta(\hat{y}_{1:t}^{(K)})$ in Search-Based Loss}
+  \begin{itemize}
+  \item Weight the loss according to severity of the sequence's error.
+  \item For example, $\Delta(\hat{y}_{1:t}^{(K)}) = 1 - \mathrm{BLEU}(\hat{y}_{1:t}^{(K)})$.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Algorithm}
+  Define (constraint can be applied)
+  $$
+  \mathrm{succ}(\{y^{(1)}_{1:t-1}, y^{(2)}_{1:t-1}, \cdots, y^{(K)}_{1:t-1}\}) = 
+  \bigcup_{k=1}^K \bigcup_{y \in \text{vocabulary}} \{ y^{(k)}_{1:t-1} y \}
+  $$
+  Algorithm:
+  \begin{itemize}
+  \item Initialize beam $S_1$ and $loss = 0$.
+  \item For $t = 1, 2, \cdots, T - 1$,
+    \begin{itemize}
+    \item If $K$-th rank sequence violates margin, then
+      $$loss += \mathcal{L}_t(f)$$
+      $$S_{t + 1} = \mathrm{TopK}(\mathrm{succ}(\{ y_{1:t} \}))$$
+    \item Else,
+      $$S_{t + 1} = \mathrm{TopK}(\mathrm{succ}(S_t))$$
+    \end{itemize}
+  \item For $t = T$, if the top ranked sequence violate margin, then
+    $$loss += \mathcal{L}_T(f)$$
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Illustrator of the Algorithm}
+  \begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{./figures/beam.pdf}
+    \caption{Figure 1 of the original paper.}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Methodology}
+  \begin{itemize}
+  \item Pre-train with standard seq2seq is required.
+  \item Increase beam size gradually.
+  \item Dropout!
+  \end{itemize}
+\end{frame}

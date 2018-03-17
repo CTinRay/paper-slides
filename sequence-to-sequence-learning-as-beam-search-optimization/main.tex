@@ -1,0 +1,53 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+
+\usefonttheme{professionalfonts}
+\usefonttheme{serif}
+\usepackage{fontspec}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage[style=authortitle,backend=biber]{biblatex}
+\addbibresource{reference.bib}
+
+% Make font fot Traditional Chinese
+\newfontfamily\zhfont[Scale=1.0]{Noto Serif CJK TC}
+
+% Information to be included in the title page:
+\title{Sequence-to-Sequence Learning as Beam-Search Optimization}
+\author{Sam Wiseman and Alexander M. Rush}
+\date{TinRay}
+
+\setbeamertemplate{footline}[frame number]
+\begin{document}
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+
+\frame{\titlepage}
+
+\begin{frame}
+  \frametitle{Why this paper}
+  \begin{itemize}
+  \item Seq2Seq is quite common!
+  \item But teacher forcing has some problem...
+  \item And I don't believe schedule sampling.
+  \end{itemize}
+\end{frame}
+
+
+\input{pages/overview.tex}
+\input{pages/beam-search-optimization.tex}
+\input{pages/results.tex}
+% \input{pages/references.tex}
+
+\end{document}

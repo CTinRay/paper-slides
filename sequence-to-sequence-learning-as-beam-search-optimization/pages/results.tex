@@ -1,0 +1,119 @@
+\section{Results}
+
+\begin{frame}
+  \frametitle{Word Ordering}
+  Task: Re-order the words in shuffled sentence.
+  \begin{table}
+    \centering
+    \begin{tabular}{lccc}
+      \toprule
+      & $K_{te}$ = 1 & $K_{te}$ = 5 & $K_{te}$ = 10 \\ 
+      \midrule
+      seq2seq & 25.2 & 29.8 & 31.0 \\
+      BSO     & 28.0 & 33.2 & 34.3 \\
+      ConBSO & \textbf{28.6} & \textbf{34.3} & \textbf{34.5} \\
+      \midrule
+      LSTM-LM & 15.4 &  - & 26.8 \\
+      \bottomrule
+    \end{tabular}
+    \caption{BLEU score of models}
+    \label{tab:wo}
+  \end{table}
+
+  \begin{table}
+    \centering
+    \begin{tabular}{lccc}
+      \toprule
+      &  $K_{te}$ = 1 & $K_{te}$ = 5 & $K_{te}$ = 10 \\ 
+      \midrule
+      $K_{tr}$ = 2 & 30.59 & 31.23 & 30.26 \\
+      $K_{tr}$ = 6 & 28.20 & 34.22 & 34.67 \\
+      $K_{tr}$ = 11 & 26.88 & 34.42 & 34.88 \\   
+      \midrule
+      seq2seq & 26.11 & 30.20 & 31.04 \\         
+      \bottomrule
+    \end{tabular}
+    \caption{Beam size experiments}
+    \label{tab:wosizeexp}
+  \end{table}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dependency Parsing}
+  \begin{table}
+  \centering
+  %\hspace*{-0.3cm}
+  \begin{tabular}{@{}l@{\hspace{4pt}}ccc}
+    \toprule
+    & \multicolumn{3}{c}{Dependency Parsing (UAS/LAS) } \\ 
+          & $K_{te}$ = 1 & $K_{te}$ = 5 & $K_{te}$ = 10 \\ 
+    \midrule
+    seq2seq & \textbf{87.33/82.26} & 88.53/84.16 & 88.66/84.33\\
+    BSO & 86.91/82.11 & 91.00/\textbf{87.18} & 91.17/\textbf{87.41} \\
+    ConBSO & 85.11/79.32 & \textbf{91.25}/86.92 & \textbf{91.57}/87.26 \\
+    \midrule
+    Andor & 93.17/91.18 & - & - \\ 
+    \bottomrule
+  \end{tabular}
+  % \caption{Dependency parsing. UAS/LAS of  seq2seq, BSO, ConBSO and baselines on PTB test set. Andor is the current state-of-the-art model for this data set (Andor et al. 2016), and we note that with a beam of size 32 they obtain 94.41/92.55. All experiments above have $K_{tr}\,{=}\,6$.}
+  \label{tab:dep}
+\end{table}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Machine Traslation}
+  \begin{table}[t!]
+    \centering
+    \begin{tabular}{lccc}
+      \toprule
+      % & \multicolumn{3}{c}{Machine Translation (BLEU) } \\ 
+        &  $K_{te}$ = 1 & $K_{te}$ = 5 & $K_{te}$ = 10 \\ 
+      \midrule
+      seq2seq & 22.53 & 24.03 & 23.87 \\
+      BSO, SB-$\Delta$ & \textbf{23.83} & \textbf{26.36} & \textbf{25.48} \\
+      \midrule
+      XENT & 17.74 & 20.10 & 20.28 \\
+      DAD & 20.12 & 22.25 & 22.40 \\ 
+      MIXER & 20.73 & 21.81 & 21.83 \\    
+      \bottomrule
+    \end{tabular}
+    % \caption{Machine translation experiments on test set; results below middle line are from MIXER model of Ranzato et al. (2016). SB-$\Delta$ indicates sentence BLEU costs are used in defining $\Delta$.  XENT is similar to our seq2seq model but with a convolutional encoder and simpler attention. DAD trains seq2seq with scheduled sampling (Bengio et al., 2015). BSO, SB-$\Delta$ experiments above have $K_{tr} \niceq 6$.}
+    \caption{BLEU scores of models}
+    \label{tab:mtfinal}
+  \end{table}
+
+
+  \begin{table}[t!]
+    \centering
+    \begin{tabular}{lccc}
+      \toprule
+      % & \multicolumn{3}{c}{Machine Translation (BLEU)} \\ 
+      &  $K_{te}$ = 1 & $K_{te}$ = 5 & $K_{te}$ = 10 \\ 
+      \midrule
+      0/1-$\Delta$ & 25.73  & 28.21 & 27.43  \\  
+      SB-$\Delta$ & 25.99  & 28.45 & 27.58 \\  
+      \bottomrule
+    \end{tabular}
+    \caption{Experiments of $\Delta$}
+    % \caption{BLEU scores obtained on the machine translation development data when training with $\Delta(\beampred{t}{k}) \niceq 1$ (top) and $\Delta(\beampred{t}{k}) \niceq 1 \,{-}\,\mathrm{SB}(\hat{y}_{r+1:t}^{({K})}, y_{r+1:t})$ (bottom), and $K_{tr}$ = 6. }
+    \label{tab:mtdelt}
+  \end{table}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Timing}
+  \begin{itemize}
+  \item Standard seq2seq: 13038 tokens/sec
+  \item Beam Search Optimization
+    \begin{itemize}
+    \item $K_{tr} = 2$: 1985 tokens/sec
+    \item $K_{tr} = 3$: 1768 tokens/sec
+    \item $K_{tr} = 4$: 1709 tokens/sec
+    \item $K_{tr} = 5$: 1521 tokens/sec
+    \item $K_{tr} = 6$: 1458 tokens/sec
+    \end{itemize}
+  \end{itemize}
+\end{frame}

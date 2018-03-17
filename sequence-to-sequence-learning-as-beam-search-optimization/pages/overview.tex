@@ -1,0 +1,85 @@
+\begin{frame}
+\frametitle{Outline}
+\tableofcontents
+\end{frame}
+
+\begin{frame}
+  \frametitle{Warning}
+  \begin{itemize}
+  \item Following content is based on my understanding.
+  \item {\zhfont 「聽我說，不要看課本，課本會誤導你，我講比較清楚！」} - by Prof. \textit{Long and Far}.
+  \end{itemize}
+\end{frame}
+
+\section{Introduction}
+
+
+\begin{frame}
+  \frametitle{Overview}
+  \begin{itemize}
+  \item Standard seq2seq learning process has issues.
+    \begin{itemize}
+    \item Exposure Bias
+    \item Loss-Evaluation Mismatch
+    \item Label Bias
+    \end{itemize}
+  \item \textbf{Beam Search Optimization} can solve the issues above.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Reminder: Standard Seq2Seq}
+  \begin{itemize}
+  \item Let
+    \begin{itemize}
+    \item $w_1, w_2, \cdots, w_T$ be the target (gold) sequence.
+    \item $y_1, y_2, \cdots, y_T$ be the output of the model.
+    \item $x$ be the input.
+    \end{itemize}
+  \item When training, we maximize the likelihood
+    $$P(y_t = w_t | x, w_1, w_2, \cdots, w_{t-1})$$
+    for $t = 1, 2, \cdots, T$
+  \item When testing, if greadily
+    $$y_t = \arg \max_y P(y | x, y_1, y_2, \cdots, y_{t-1})$$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Issues of Standard Seq2Seq - Exposure Bias}
+  \begin{itemize}
+  \item When training, we optimize the likelihood
+    $$P(y_t = w_t | x, w_1, w_2, \cdots, w_{t-1})$$
+    for $t = 1, 2, \cdots, T$
+  \item When testing, if greadily
+    $$y_t = \arg \max_y P(y | x, y_1, y_2, \cdots, y_{t-1})$$
+  \item The model is not exposed to its error when training.
+  \item Scheduling sampling...
+    $$P(y_t = w_t | x, w_1, y_2, \cdots, w_{t-1}, y_{t-1})$$
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Issues of Standard Seq2Seq - Loss Evaluation Bias}
+  \begin{itemize}
+  \item The loss we optimize is word level, while the evaluation metrics may be sentence level.
+  \item Sequence with lower loss may not have higher score.
+  \item For example, CrossEntropy and BLEU.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Issues of Standard Seq2Seq - Label Bias}
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/label-bias.png}
+    \footnote{Conditional Random Fields: Probabilistic Models for Segmenting and Labeling Sequence Data}
+  \end{figure}
+
+  \begin{itemize}
+  \item Model may sometime output high score while ignoring the input.
+  \item But I do not think it will be a problem for seq2seq.
+  \end{itemize}
+\end{frame}
